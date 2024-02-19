@@ -32,4 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-Docker/data/postgres/*x
+Docker/data/postgres/*

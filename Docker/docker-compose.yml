@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+
+  demo:
+      build:
+            context: ./dockerFile/DemoUserService
+      restart: always 
+      ports:
+            - 8100:8100
+      image: 'demouserimg'
+      volumes:
+            -  /etc/localtime:/etc/localtime
+            - ./otherservice/DemoUserService:/opt/DemoUserService
+      command: /bin/sh -c "chmod 0755 ./startup.sh | ./startup.sh | java -jar /opt/DemoUserService/demoUserService.jar"
+      deploy:
+            mode: replicated
