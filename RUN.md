@@ -57,3 +57,52 @@ CREATE TABLE employees (
 );
 ```
 
+7. To insert the data in the table
+
+```
+INSERT INTO table_name (column1, column2, ...)
+VALUES (value1, value2, ...);
+```
+
+Example:
+```
+INSERT INTO employees (name, age, salary)
+VALUES ('John Doe', 30, 50000.00);
+
+INSERT INTO employees (name, age, salary)
+VALUES ('Jane Smith', 35, 60000.00);
+
+INSERT INTO employees (name, age, salary)
+VALUES ('Alice Johnson', 28, 45000.00);
+```
+
+8. To update the data in the table.
+
+```
+UPDATE table_name
+SET column1 = value1, column2 = value2, ...
+WHERE condition;
+```
+Example:
+```
+UPDATE employees
+SET salary = 55000.00
+WHERE name = 'John Doe';
+```
+
+9. To delete a specific from the table
+
+```
+DELETE FROM table_name
+WHERE condition;
+```
+
+10. To delete all the records in a table.
+
+```
+DELETE FROM table_name;
+```
+
+```
+DELETE FROM employees;
+```
