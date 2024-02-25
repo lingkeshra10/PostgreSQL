@@ -1,24 +1,54 @@
-Login to PostgreSQL
+# Useful PostgreSQL commands
 
+This file contains the useful commands that can run in PostgreSQL Database.
+
+1. Login to PostgreSQL
+
+```
 psql -U your_username -d your_database_name
 
-psql -U adminlingkesh -d psql_user
+e.g: psql -U adminlingkesh -d psql_user
+```
 
-Show tables under the database
+2. List the databases
 
-SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;
+```
+\l
+```
 
-Create User Table
+3. Connect to different database
 
-CREATE TABLE br_user (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR,
-    email VARCHAR,
-    username VARCHAR NOT NULL,
-    encryptPassword INT NOT NULL
+```
+\c database_name
+```
+
+4. List the tables in side the database
+
+```
+\dt
+```
+
+5. Describe the tables. Show the columns and datatype of columns
+
+```
+\d table_name
+```
+
+6. To create a table in a database
+
+```
+CREATE TABLE table_name (
+    column1 datatype1,
+    column2 datatype2,
+    ...
 );
 
-To see the column of the table
-
-SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'br_user';
+e.g.:
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    age INTEGER,
+    salary DECIMAL(10,2)
+);
+```
 
