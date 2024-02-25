@@ -6,8 +6,11 @@ This file contains the useful commands that can run in PostgreSQL Database.
 
 ```
 psql -U your_username -d your_database_name
+```
 
-e.g: psql -U adminlingkesh -d psql_user
+Example:
+```
+psql -U adminlingkesh -d psql_user
 ```
 
 2. List the databases
@@ -42,8 +45,10 @@ CREATE TABLE table_name (
     column2 datatype2,
     ...
 );
+```
 
-e.g.:
+Example:
+```
 CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
