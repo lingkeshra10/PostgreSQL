@@ -1,8 +1,10 @@
 # PostgreSQL
 
+## Introduction
+
 PostgreSQL (often referred to simply as Postgres) is an open-source, object-relational database management system (DBMS). It is known for its advanced features, extensibility, and support for SQL and other programming languages. PostgreSQL provides a powerful and reliable solution for managing and storing structured data.
 
-Key features of PostgreSQL include:
+## Key features of PostgreSQL
 
 - **Relational Database:** PostgreSQL is a relational database system, meaning it stores data in tables with rows and columns, allowing you to define relationships between tables and perform complex queries.
 
