@@ -102,7 +102,7 @@ WHERE condition;
 ```
 DELETE FROM table_name;
 ```
-
+Example:
 ```
 DELETE FROM employees;
 ```
