@@ -1,16 +1,16 @@
 version: '3.9'
 services:
 
-  demo:
-      build:
-            context: ./dockerFile/DemoUserService
-      restart: always 
-      ports:
-            - 8100:8100
-      image: 'demouserimg'
-      volumes:
-            -  /etc/localtime:/etc/localtime
-            - ./otherservice/DemoUserService:/opt/DemoUserService
-      command: /bin/sh -c "chmod 0755 ./startup.sh | ./startup.sh | java -jar /opt/DemoUserService/demoUserService.jar"
-      deploy:
-            mode: replicated
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: psql_user
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: foo123
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql
+      - ./data/postgresInitDB:/docker-entrypoint-initdb.d:ro

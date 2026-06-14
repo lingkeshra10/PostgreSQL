@@ -1,48 +1,110 @@
-# PostgreSQL
+# Spring Boot PostgreSQL CRUD Demo
 
-## Introduction
+A demo REST API built with Spring Boot 3.2.2 and PostgreSQL, providing basic User CRUD operations. The project includes Docker Compose for local full-stack orchestration and Kubernetes manifests for local cluster deployment.
 
-PostgreSQL (often referred to simply as Postgres) is an open-source, object-relational database management system (DBMS). It is known for its advanced features, extensibility, and support for SQL and other programming languages. PostgreSQL provides a powerful and reliable solution for managing and storing structured data.
+## Project Structure
 
-## Key features of PostgreSQL
+```
+├── Back-End/              # Spring Boot application source code (Java 21, Maven)
+├── Docker/                # Dockerfile, docker-compose files for containerized deployment
+├── Kubernetes/            # Kubernetes Deployment and Service manifests
+├── Postman Collections/   # Postman collection for testing API endpoints
+└── README.md
+```
 
-- **Relational Database:** PostgreSQL is a relational database system, meaning it stores data in tables with rows and columns, allowing you to define relationships between tables and perform complex queries.
+| Directory | Description |
+|-----------|-------------|
+| `Back-End/` | Contains the Spring Boot Maven project (`demo/`) with the User CRUD REST API. |
+| `Docker/` | Dockerfile for the application image, full-stack `docker-compose.yml`, and a standalone PostgreSQL compose file. |
+| `Kubernetes/` | YAML manifests to deploy the application and PostgreSQL on a local Kubernetes cluster. |
+| `Postman Collections/` | Exported Postman collection with pre-configured requests for all API endpoints. |
 
-- **Advanced SQL Support:** PostgreSQL supports a wide range of SQL standards and offers various extensions and advanced features beyond the standard SQL specification.
+## Prerequisites
 
-- **Extensibility:** PostgreSQL allows you to define custom data types, operators, functions, and aggregates, which makes it highly extensible and adaptable to specific use cases.
+- **Java 21** — required to build the application
+- **Maven** — used for building the Spring Boot project
+- **Docker** and **Docker Compose** — for running the containerized stack locally
 
-- **Concurrency Control:** PostgreSQL supports multi-version concurrency control (MVCC), enabling multiple transactions to occur simultaneously without conflicting with each other.
+Optional (for Kubernetes deployment):
 
-- **Data Integrity:** It provides mechanisms for ensuring data integrity, such as constraints, triggers, and foreign keys, to maintain the accuracy and consistency of data.
+- **kubectl** — Kubernetes command-line tool
+- **Minikube** or **kind** — local Kubernetes cluster
 
-- **Indexing:** PostgreSQL offers various indexing techniques, including B-tree, hash, and generalized search tree (GiST), to optimize data retrieval performance.
+## Running with Docker Compose
 
-- **JSON and JSONB Support:** PostgreSQL has native support for storing, querying, and indexing JSON data. The JSONB data type provides efficient storage and querying of JSON documents.
+1. Build the application JAR:
 
-- **Full-Text Search:** PostgreSQL includes a powerful full-text search engine that allows you to perform text searches with advanced features like stemming, ranking, and linguistic support.
+   ```bash
+   cd Back-End/demo
+   mvn clean package -DskipTests
+   ```
 
-- **Geospatial Capabilities:** PostGIS is an extension for PostgreSQL that adds geospatial data types and functions, making it suitable for working with geographic information systems (GIS) and location-based applications.
+2. Copy the JAR to the Docker build context:
 
-- **Scalability:** PostgreSQL can handle large datasets and high-traffic applications, and it supports replication, partitioning, and clustering for improved scalability.
+   ```bash
+   cp Back-End/demo/target/demo-0.0.1-SNAPSHOT.jar Docker/dockerfile/DemoUserService/
+   ```
 
-- **Open Source and Community-Driven:** PostgreSQL is open-source software with an active and vibrant community of developers and users who contribute to its development and maintenance.
+3. Start the full stack (PostgreSQL + Application):
 
-PostgreSQL is widely used for a variety of applications, ranging from small projects to large enterprise systems, and it is commonly chosen for its reliability, data integrity, extensibility, and support for modern data types and technologies
+   ```bash
+   cd Docker
+   docker-compose up --build
+   ```
 
-## Replication on PostgreSQL
+4. The API will be available at `http://localhost:8080`.
 
-PostgreSQL replication is when data from one server is copied to another. The original server is called the "primary," and the receiving server is the "replica." In this process, changes made to the primary server are sent to the replica server for consistency.
+5. To stop the services:
 
-## Benefits of using the PostgreSQL
+   ```bash
+   docker-compose down
+   ```
 
-Here are some key advantages of using PostgreSQL replication:
+## Running with Kubernetes
 
-1. **Data migration:** PostgreSQL replication simplifies data migration, whether you're upgrading hardware or deploying a new system.
+1. Build the Docker image locally:
 
-2. **Fault tolerance:** In case the primary server experiences a failure, the standby server can seamlessly take over since it holds identical data.
+   ```bash
+   cd Docker/dockerfile/DemoUserService
+   docker build -t demouserimg:latest .
+   ```
 
-3. **Improved OLTP performance:** By reducing the load of reporting queries, PostgreSQL replication enhances transaction processing and query times in Online Transactional Processing (OLTP) systems.
+   > If using Minikube, run `eval $(minikube docker-env)` first so the image is available to the cluster.
 
-4. **Parallel system testing:** Before deploying system upgrades, it's essential to ensure compatibility with existing data. PostgreSQL replication facilitates this by allowing testing with a copy of the production databas
+2. Apply the Kubernetes manifests:
 
+   ```bash
+   kubectl apply -f Kubernetes/
+   ```
+
+3. Wait for pods to become ready:
+
+   ```bash
+   kubectl get pods -w
+   ```
+
+4. Access the application:
+
+   ```bash
+   minikube service demo-user-service
+   ```
+
+   Or, if using kind or another cluster, use the NodePort assigned to the `demo-user-service` Service on port 8080.
+
+5. To tear down:
+
+   ```bash
+   kubectl delete -f Kubernetes/
+   ```
+
+## API Endpoints
+
+All endpoints are served on port **8080** under the base path `/psql/user`.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| PUT | `/psql/user/add` | Add a new user |
+| PUT | `/psql/user/update` | Update an existing user |
+| GET | `/psql/user/isUserExist/{username}` | Check if a user exists |
+| GET | `/psql/user/listUser` | Retrieve all users |
+| DELETE | `/psql/user/delete/{username}` | Delete a user by username |

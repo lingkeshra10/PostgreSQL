@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-user-service
+  labels:
+    app: demo-user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-user-service
+  template:
+    metadata:
+      labels:
+        app: demo-user-service
+    spec:
+      containers:
+        - name: demo-user-service
+          image: demouserimg:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/psql_user"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "admin"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "foo123"

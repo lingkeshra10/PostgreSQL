@@ -1,45 +1,75 @@
 # Useful PostgreSQL commands
 
-This file contains the useful commands that can run in PostgreSQL Database.
+This file contains useful commands for working with the PostgreSQL database in this project.
 
-1. Login to PostgreSQL
+## Connecting to the Database
+
+### From host (when PostgreSQL container is running)
+
+```
+psql -h localhost -U admin -d psql_user
+```
+
+### From inside the Docker container
+
+```bash
+docker exec -it postgres_db psql -U admin -d psql_user
+```
+
+### General syntax
 
 ```
 psql -U your_username -d your_database_name
 ```
 
-Example:
-```
-psql -U adminlingkesh -d psql_user
-```
+## psql Meta-Commands
 
-2. List the databases
+2. List all databases
 
 ```
 \l
 ```
 
-3. Connect to different database
+3. Connect to a different database
 
 ```
 \c database_name
 ```
 
-4. List the tables in side the database
+4. List all tables in the current database
 
 ```
 \dt
 ```
 
-5. Describe the tables. Show the columns and datatype of columns
+5. Describe a table (show columns and data types)
 
 ```
 \d table_name
 ```
 
-6. To create a table in a database
+Example (for this project's table):
+```
+\d br_user
+```
+
+6. Show current connection info
 
 ```
+\conninfo
+```
+
+7. Quit psql
+
+```
+\q
+```
+
+## SQL Commands
+
+### CREATE TABLE
+
+```sql
 CREATE TABLE table_name (
     column1 datatype1,
     column2 datatype2,
@@ -47,62 +77,104 @@ CREATE TABLE table_name (
 );
 ```
 
-Example:
-```
-CREATE TABLE employees (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    age INTEGER,
-    salary DECIMAL(10,2)
+Example (this project's `br_user` table — created automatically by JPA, shown here for reference):
+```sql
+CREATE TABLE br_user (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    email VARCHAR(255),
+    username VARCHAR(255) NOT NULL,
+    encrypt_password INTEGER NOT NULL
 );
 ```
 
-7. To insert the data in the table
+### INSERT
 
-```
+```sql
 INSERT INTO table_name (column1, column2, ...)
 VALUES (value1, value2, ...);
 ```
 
 Example:
-```
-INSERT INTO employees (name, age, salary)
-VALUES ('John Doe', 30, 50000.00);
+```sql
+INSERT INTO br_user (name, email, username, encrypt_password)
+VALUES ('John Doe', 'john@example.com', 'johndoe', 123456);
 
-INSERT INTO employees (name, age, salary)
-VALUES ('Jane Smith', 35, 60000.00);
-
-INSERT INTO employees (name, age, salary)
-VALUES ('Alice Johnson', 28, 45000.00);
+INSERT INTO br_user (name, email, username, encrypt_password)
+VALUES ('Jane Smith', 'jane@example.com', 'janesmith', 654321);
 ```
 
-8. To update the data in the table.
+### SELECT
 
+```sql
+-- Select all records
+SELECT * FROM br_user;
+
+-- Select specific columns
+SELECT id, name, username FROM br_user;
+
+-- Select with a condition
+SELECT * FROM br_user WHERE username = 'johndoe';
+
+-- Count records
+SELECT COUNT(*) FROM br_user;
+
+-- Order results
+SELECT * FROM br_user ORDER BY name ASC;
 ```
+
+### UPDATE
+
+```sql
 UPDATE table_name
 SET column1 = value1, column2 = value2, ...
 WHERE condition;
 ```
+
 Example:
-```
-UPDATE employees
-SET salary = 55000.00
-WHERE name = 'John Doe';
-```
-
-9. To delete a specific from the table
-
-```
-DELETE FROM table_name
-WHERE condition;
+```sql
+UPDATE br_user
+SET email = 'newemail@example.com'
+WHERE username = 'johndoe';
 ```
 
-10. To delete all the records in a table.
+### DELETE
 
+```sql
+-- Delete a specific record
+DELETE FROM br_user
+WHERE username = 'johndoe';
+
+-- Delete all records (keeps the table)
+DELETE FROM br_user;
 ```
-DELETE FROM table_name;
+
+### TRUNCATE
+
+```sql
+-- Remove all rows and reset the ID sequence (faster than DELETE for clearing a table)
+TRUNCATE TABLE br_user RESTART IDENTITY;
 ```
-Example:
+
+### DROP TABLE
+
+```sql
+-- Permanently remove the table and all its data
+DROP TABLE IF EXISTS br_user;
 ```
-DELETE FROM employees;
+
+## Useful Queries for This Project
+
+```sql
+-- Check if a user exists by username
+SELECT EXISTS(SELECT 1 FROM br_user WHERE username = 'admin9');
+
+-- Find users by partial name match
+SELECT * FROM br_user WHERE name ILIKE '%lingkesh%';
+
+-- Show table size
+SELECT pg_size_pretty(pg_total_relation_size('br_user'));
+
+-- Show all sequences (useful for checking auto-increment state)
+SELECT * FROM pg_sequences WHERE schemaname = 'public';
 ```
